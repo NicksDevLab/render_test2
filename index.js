@@ -78,7 +78,7 @@ app.put('/api/persons/:id', (request, response) => {
     const id = request.params.id
     persons = persons.map(person => {
         if (person.id === id) {
-            person['important'] = true
+            person['important'] = !person['important'] || true
         }
         return person
     })
