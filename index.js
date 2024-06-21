@@ -76,12 +76,10 @@ app.post('/api/persons', (request, response) => {
 
 app.put('/api/persons/:id', (request, response) => {
     const id = request.params.id
-    persons = persons.map(person => {
-        if (person.id === id) {
-            person['important'] = !person['important'] || true
-        }
-        return person
-    })
+    const person = persons.find(p => p.id === id)
+    person['important'] = !person['important'] || true
+    console.log({person})
+    respond(person)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
