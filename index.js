@@ -74,6 +74,16 @@ app.post('/api/persons', (request, response) => {
     response.json(person)
 })
 
+app.put('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    persons = persons.map(person => {
+        if (person.id === id) {
+            person['important'] = true
+        }
+        return person
+    })
+})
+
 app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     persons = persons.filter(p => p.id !== id)
