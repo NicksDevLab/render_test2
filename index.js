@@ -7,11 +7,7 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
-const PORT = 3001
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-})
+const PORT = process.env.PORT || 3001
 
 let persons = [
     { 
@@ -88,3 +84,7 @@ const unknownEndpoint = (request, response) => {
 }
   
 app.use(unknownEndpoint)
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
