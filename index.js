@@ -70,20 +70,20 @@ app.post('/api/persons', (request, response) => {
         })
     }
     const person = {
+        id: getUniqueId(),
         name: body.name,
         number: body.number,
-        id: getUniqueId()
+        important: false
     }
     persons = persons.concat(person)
     response.json(person)
 })
 
 app.put('/api/persons/:id', (request, response) => {
-    const id = request.params.id
+    const id = request.body.id
     const person = persons.find(p => p.id === id)
-    person.important = !person.important || true
-    console.log({person})
-    respond(person)
+    person.important = !person.important
+    response.json(person)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
