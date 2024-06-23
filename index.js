@@ -2,40 +2,16 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
 
 const app = express()
 app.use(express.json())
 app.use(express.static('dist'))
 app.use(cors())
 
-const PORT = process.env.PORT || 3001
+require('dotenv').config()
 
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456",
-      "important": false
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523",
-      "important": false
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345",
-      "important": false
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122",
-      "important": false
-    }
-]
+const PORT = process.env.PORT || 3001
 
 app.use(morgan('tiny'))
 
@@ -44,23 +20,16 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+    Person.find({}).then(persons => {
+        response.json(persons)
+    })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(p => p.id === id)
-    if (person) {
-        response.json(person)
-    } else {
-        response.status(404).end()
-    }
+    Person.findById(request.params.id).then(p => {
+        response.json(p)
+    })
 })
-
-const getUniqueId = () => {
-    const id = Math.max(...persons.map(p => p.id))
-    return id + 1
-}
 
 app.post('/api/persons', (request, response) => {
     const body = request.body
@@ -69,27 +38,46 @@ app.post('/api/persons', (request, response) => {
             error: 'Missing name value'
         })
     }
-    const person = {
-        id: getUniqueId(),
+    const person = new Person({
         name: body.name,
         number: body.number,
         important: false
-    }
-    persons = persons.concat(person)
-    response.json(person)
+    })
+    person.save().then(savedPerson => {
+        response.json(savedPerson)
+    })
 })
 
 app.put('/api/persons/:id', (request, response) => {
-    const id = request.body.id
-    const person = persons.find(p => p.id === id)
-    person.important = !person.important
-    response.json(person)
+    const id = request.params.id
+    const updateData = {
+        important: request.body.important,
+    }
+    Person.findByIdAndUpdate(id, updateData, {
+        new: true,
+    }).then(updatedItem => {
+        if (updatedItem) {
+          response.status(200).json(updatedItem);
+        } else {
+          response.status(404).json({ message: 'Item not found' });
+        }
+    }).catch(error => {
+      console.error('Error updating item:', error);
+      response.status(500).json({ message: 'Internal server error' });
+    });
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    persons = persons.filter(p => p.id !== id)
-    response.status(204).end()
+    Person.findByIdAndDelete(request.params.id).then(deletedItem => {
+        if (deletedItem) {
+          response.status(200).json({ message: 'Item deleted successfully', deletedItem });
+        } else {
+          response.status(404).json({ message: 'Item not found' });
+        }
+    }).catch(error => {
+        console.error('Error deleting item:', error);
+        response.status(500).json({ message: 'Internal server error' });
+    });
 })
 
 const unknownEndpoint = (request, response) => {
