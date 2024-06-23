@@ -2,21 +2,21 @@
 
 require('dotenv').config()
 
-const mongoose = require('mongoose')
-mongoose.set('strictQuery',false)
+import { set, connect, Schema, model } from 'mongoose'
+set('strictQuery',false)
 
 const url = process.env.MONGODB_URL
 console.log('connecting to ', url)
 
-mongoose.connect(url)
+connect(url)
     .then(result => {
-        console.log('connected to MongoDB')
+        console.log('connected to MongoDB', result)
     })
     .catch(error => {
         console.log('error connecting to MongoDB: ', error.message)
     })
 
-const personSchema = new mongoose.Schema({
+const personSchema = new Schema({
   name: String,
   number: String,
   important: Boolean,
@@ -29,4 +29,4 @@ personSchema.set('toJSON', {
     }
 })
 
-module.exports = mongoose.model('Person', personSchema)
+export default model('Person', personSchema)
