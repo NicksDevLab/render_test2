@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "PORT=3001 node index.js",
+    "build": "git add . && git commit -m build && git push",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
