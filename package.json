@@ -6,7 +6,8 @@
     "start": "PORT=3001 node index.js",
     "build": "git add . && git commit -m build && git push",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "MIT",
@@ -19,6 +20,10 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.5.0",
+    "@stylistic/eslint-plugin-js": "^2.3.0",
+    "eslint": "^9.5.0",
+    "globals": "^15.6.0",
     "nodemon": "^3.1.3"
   }
 }
